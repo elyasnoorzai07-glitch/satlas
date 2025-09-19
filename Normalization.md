@@ -105,7 +105,7 @@ image[:, 3:9, :, :] = np.clip(image[:, 3:9, :, :]//32, 0, 255)
 image = image.astype(np.uint8)
 np.save('stack.npy', image)
 ```
-
+The reordering above (`(1, 2, 3, 4, 5, 6, 0, 7, 8)`) is for the reordered TIFF (`['B08', 'TCI', 'B05', 'B06', 'B07', 'B11', 'B12']`). The input band ordering to Satlas is `["B04", "B03", "B02", "B05", "B06", "B07", "B08", "B11", "B12"]`.
 
 Landsat Images
 --------------
