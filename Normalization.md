@@ -71,6 +71,8 @@ Use gdal to merge the bands across scenes. We include nine bands since we're ass
 import glob
 import os
 import subprocess
+# Satlas expects the TCI bands (R, G, B) first, but we put B08 here so that the
+# merged output is 16-bit instead of 8-bit.
 channels = ['B08', 'TCI', 'B05', 'B06', 'B07', 'B11', 'B12']
 fnames = []
 for scene_name in os.listdir('scenes'):
@@ -98,6 +100,8 @@ image = raster.ReadAsArray()
 # Separate out the different 9-band images.
 image = image.reshape(-1, 9, image.shape[1], image.shape[2])
 # Re-order bands to the order expected by the model.
+# The stack.tif is ordered B08, R, G, B, B05, B06, B07, B11, B12.
+# This reordering results in the expected one: R, G, B, B05, B06, B07, B08, B11, B12.
 image = image[:, (1, 2, 3, 4, 5, 6, 0, 7, 8), :, :]
 # Normalize the non-TCI bands to be 0-255.
 image[:, 3:9, :, :] = np.clip(image[:, 3:9, :, :]//32, 0, 255)
@@ -105,7 +109,6 @@ image[:, 3:9, :, :] = np.clip(image[:, 3:9, :, :]//32, 0, 255)
 image = image.astype(np.uint8)
 np.save('stack.npy', image)
 ```
-
 
 Landsat Images
 --------------
